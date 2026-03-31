@@ -1,10 +1,11 @@
 generator client {
   provider = "prisma-client-js"
 }
+
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
+
 model User {
   id            String         @id @default(cuid())
   username      String         @unique
@@ -14,12 +15,14 @@ model User {
   portfolios    Portfolio[]
   createdAt     DateTime       @default(now())
 }
+
 model Wallet {
   id         String   @id @default(cuid())
   balance    Decimal  @default(10000.00)
   userId     String   @unique
   user       User     @relation(fields: [userId], references: [id])
 }
+
 model Asset {
   id           String      @id @default(cuid())
   symbol       String      @unique
@@ -27,6 +30,7 @@ model Asset {
   currentPrice Decimal
   portfolios   Portfolio[]
 }
+
 model Portfolio {
   id        String  @id @default(cuid())
   userId    String
@@ -34,13 +38,15 @@ model Portfolio {
   quantity  Decimal
   user      User    @relation(fields: [userId], references: [id])
   asset     Asset   @relation(fields: [assetId], references: [id])
+
   @@unique([userId, assetId])
 }
+
 model Transaction {
   id        String   @id @default(cuid())
   userId    String
   assetId   String
-  type      String
+  type      String   // BUY or SELL
   amount    Decimal
   price     Decimal
   timestamp DateTime @default(now())
